@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 def plotar_grafico(var_data, var_x, var_y, var_title, var_media_movel=""):
     plt.figure(figsize=(15,5))
 
@@ -16,12 +17,19 @@ def plotar_grafico(var_data, var_x, var_y, var_title, var_media_movel=""):
 
 
 #importar dados
-url_file = 'dados\A105613189_28_143_208.csv'
-dados = pd.read_csv(url_file, encoding='ISO-8859-1', sep=';', skiprows=3, skipfooter=16, engine='python')
+url_file_han = 'E:/DADOS/Marcelo/Bootcamp/DS/analise_previsao_series_temporais/dados/Hanseniase.csv'
+
+dados = pd.read_csv(url_file_han, encoding='ISO-8859-1', sep=';', skiprows=3, skipfooter=10, engine='python')
+
 
 #dropar as colunas e as linhas
 dados = dados.drop("Total",axis=1)
-dados = dados.drop(19,axis=0)
+dados = dados.drop(0,axis=0)
+dados = dados.drop(46,axis=0)
+dados = dados.replace('-',0)
+
+#verificar os dados
+#print(dados.head(10))
 
 #criar um novo dataframe para facilitar o trabalhos com as séries temporais
 dados_time_series = dados.melt(id_vars="Ano Diagnóstico", value_name="Casos", var_name="Mes")
@@ -29,6 +37,10 @@ dados_time_series['Data'] = dados_time_series["Ano Diagnóstico"] + "-" + dados_
 
 #Converter a coluna Caos em int
 dados_time_series['Casos'] = pd.to_numeric(dados_time_series['Casos'])
+
+
+#print(dados_time_series.info())
+
 
 #converter a coluna Data em datetime
 meses_dict = {'Jan':'Jan',
@@ -43,7 +55,6 @@ meses_dict = {'Jan':'Jan',
                 'Out':'Oct',
                 'Nov':'Nov',
                 'Dez':'Dec'}
-
 
 dados_time_series['Mes'] = dados_time_series['Mes'].map(meses_dict)
 dados_time_series.sample(5)
@@ -68,4 +79,5 @@ dados_time_series['MM_12c'] = dados_time_series['Casos'].rolling(12, center= Tru
 #verificar os dados
 #print(dados_time_series)
 
-plotar_grafico(dados_time_series, 'Data', 'Casos', 'Número de casos de Tuberculose - Ano do Diagnóstico','MM_6c')
+
+plotar_grafico(dados_time_series, 'Data', 'Casos', 'Número de casos de hanseníase - Ano do Diagnóstico','MM_6c')
